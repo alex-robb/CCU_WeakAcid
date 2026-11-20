@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Titration analysis worksheet</title>
+<style>
+:root{--bg:#f2f8f8;--surf:#fff;--ink:#12302f;--mut:#4d6968;--line:#cde0df;--pink:#007377;--onacc:#fff;--c1:#007377;--c2:#b0702b;--c3:#3d4f66;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1c1c;--surf:#142626;--ink:#e4f2f1;--mut:#97b5b3;--line:#27403f;--pink:#3cc6c8;--onacc:#06201f;--c1:#3cc6c8;--c2:#e0a05a;--c3:#9bb0cc;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0e1c1c;--surf:#142626;--ink:#e4f2f1;--mut:#97b5b3;--line:#27403f;--pink:#3cc6c8;--onacc:#06201f;--c1:#3cc6c8;--c2:#e0a05a;--c3:#9bb0cc;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;padding:0 clamp(12px,2vw,28px) 24px}
+main{width:100%}
+header{background:var(--pink);color:var(--onacc);margin:0 calc(-1*clamp(12px,2vw,28px)) 16px;padding:16px clamp(12px,2vw,28px)}
+header h1{margin:0;color:inherit}
+h1{font-size:1.5rem;margin:.2em 0 .1em}
+p.sub{color:inherit;opacity:.92;margin:2px 0 0;font-size:.92rem}
+.sans,button,input,textarea,table{font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:end;margin-bottom:12px}
+label{display:flex;flex-direction:column;font-size:.8rem;color:var(--mut);gap:3px}
+input,textarea{background:var(--surf);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:7px 9px;font-size:.9rem}
+input{width:110px}
+textarea{width:100%;min-height:150px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.82rem}
+button{background:var(--surf);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:8px 12px;font-size:.88rem;cursor:pointer}
+button:hover{border-color:var(--pink)}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--pink);outline-offset:1px}
+button.primary{background:var(--pink);border-color:var(--pink);color:var(--onacc)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.tabs button[aria-pressed="true"]{border-color:var(--pink);box-shadow:inset 0 -3px 0 var(--pink)}
+.grid{display:flex;flex-direction:column;gap:16px;margin-top:14px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:760px){.two{grid-template-columns:1fr}}
+.two section{border:1px solid var(--line);border-radius:8px;padding:12px 14px;border-top:4px solid var(--c1)}
+.two section.fit{border-top-color:var(--c2)}
+.two h3{margin:0 0 2px;font-size:1.05rem}
+.two .note{margin:0 0 10px}
+th.g1,th.g2{text-align:center;color:var(--ink);font-weight:600;border-bottom:3px solid var(--c1)}
+th.g2{border-bottom-color:var(--c2)}
+.panel{background:var(--surf);border:1px solid var(--line);border-top:3px solid var(--pink);border-radius:8px;padding:12px}
+canvas{width:100%;height:380px;display:block}
+#cd{height:240px;margin-top:2px}
+.stats{display:grid;grid-template-columns:1fr auto;gap:4px 12px;font-family:system-ui,sans-serif;font-size:.9rem;margin:0}
+.stats dt{color:var(--mut)}.stats dd{margin:0;text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.85rem;font-variant-numeric:tabular-nums}
+th,td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+th{color:var(--mut);font-weight:500}
+.err{color:var(--c2);font-weight:600;font-size:.85rem;min-height:1.2em}
+h2{font-size:1.1rem;margin:20px 0 8px;color:var(--pink)}
+.note{color:var(--mut);font-size:.82rem}
+
+:root{--ok:#1f7a4d;--bad:#b3392f}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ok:#5fd08e;--bad:#f08a80}}
+:root[data-theme="dark"]{--ok:#5fd08e;--bad:#f08a80}
+table.ans input{width:100%;min-width:92px}
+table.ans td{vertical-align:top;text-align:left}
+table.ans .mk{display:block;font-size:.78rem;margin-top:2px;font-weight:600}
+td.ok,td.bad{font-weight:600}
+td.ok{background:color-mix(in srgb,var(--ok) 16%,transparent);color:var(--ok)}
+td.bad{background:color-mix(in srgb,var(--bad) 14%,transparent);color:var(--bad)}
+.btnrow{display:flex;flex-wrap:wrap;gap:12px;margin:16px 0}
+.btnrow button{flex:1;min-width:220px;font-size:1.2rem;font-weight:600;padding:18px 20px;border-radius:10px}
+.fb{margin:4px 0 8px;min-height:1.4em}
+.qh{display:block;font-weight:400;font-size:.78rem;line-height:1.35;color:var(--mut);margin-top:3px;max-width:34ch}
+.rbar{margin:28px 0 12px}
+button.big{width:100%;font-size:1.3rem;font-weight:600;padding:20px 24px;border-radius:10px;cursor:pointer}
+#rep{display:none;position:fixed;inset:0;z-index:50;overflow:auto;background:#cfe0df;padding:12px}
+#rep.open{display:block}
+#rep .bar{display:flex;flex-wrap:wrap;gap:10px;align-items:end;max-width:8in;margin:0 auto 10px}
+#rep .bar label{color:#12302f}
+#rep .bar input{width:200px;background:#fff;color:#12302f}
+#rep .bar .hint{color:#12302f;font-size:.8rem;flex-basis:100%;margin:0}
+.sheet{--surf:#fff;--ink:#12302f;--mut:#4d6968;--line:#cde0df;--pink:#007377;--ok:#1f7a4d;--bad:#b3392f;--c1:#007377;--c2:#b0702b;width:8in;max-width:100%;margin:0 auto;background:#fff;color:#12302f;padding:.4in;box-shadow:0 2px 12px #0003;font-size:12px;line-height:1.4}
+.sheet *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.sheet .rh{background:#007377;color:#fff;padding:10px 14px;border-radius:4px}
+.sheet h1{margin:0;font-size:1.5em;color:#fff}
+.sheet .rh p{margin:0;opacity:.92}
+.sheet .meta{display:flex;flex-wrap:wrap;gap:4px 18px;margin:8px 0}
+.sheet img{width:100%;display:block;margin:0 0 2px}
+.sheet h2{font-size:1.05em;margin:8px 0 4px;color:#007377}
+.sheet .panel{border:0;padding:0;background:none}
+.sheet table{font-size:10px}
+.sheet th,.sheet td{padding:2px 4px}
+.sheet .score{font-size:1.1em;margin:0 0 6px}
+.sheet .fine{color:#4d6968;font-size:10px;margin:3px 0 0}
+@media print{
+  body>*:not(#rep){display:none!important}
+  body{padding:0;background:#fff}
+  #rep{position:static;background:none;padding:0;overflow:visible}
+  #rep .bar{display:none}
+  .sheet{width:auto;padding:0;margin:0;box-shadow:none}
+  @page{size:letter;margin:.5in}
+}
+.score{font-size:1.25rem;font-weight:700;margin:0 0 10px;color:var(--pink)}
+</style>
+</head>
+<body>
+<main>
+<header><h1>Titration analysis worksheet</h1>
+<p class="sub">Load your acetic acid / NaOH titration data, study the graphs, then enter your own analysis for each run.</p></header>
+
+<div class="row">
+  <label>NaOH concentration (M)<input id="cb" type="number" step="0.001" value="0.069"></label>
+  <button id="ex">Load example data</button>
+  <label>Upload Vernier file (.txt, .csv)<input id="file" type="file" accept=".txt,.csv,.tsv,text/plain" style="width:240px"></label>
+  <button class="primary" id="go">Analyze</button>
+</div>
+
+<div class="tabs" id="tabs" role="group" aria-label="Choose run"></div>
+<div class="row">
+  <label>Acid volume in flask (mL)<input id="va" type="number" step="0.01" min="0" placeholder="required"></label>
+</div>
+<textarea id="data" aria-label="Volume and pH data" placeholder="0, 2.87&#10;2.5, 4.14&#10;..."></textarea>
+<div class="err" id="err" role="status"></div>
+
+<div class="grid">
+  <div class="panel"><canvas id="cv" role="img" aria-label="Titration curve"></canvas><canvas id="cd" role="img" aria-label="First derivative of titration curve"></canvas><p class="note" style="margin:6px 0 0">Dots are measured data and the line is the fit. Lower plot: first derivative of pH with respect to volume. Its peak lines up with the steepest part of the curve above, which is the equivalence point.</p></div>
+</div>
+
+<h2>Your analysis</h2>
+<p class="note">The graphs show the labeled values for each run. Type them in below, and work out the ones that are not on the graph (Ka and the acid concentration). Enter Ka in scientific notation (for example 1.8e-5). The acid concentration uses your NaOH concentration and the acid volume you entered for that run.</p>
+<div class="panel scroll"><div id="ans"></div></div>
+<div class="btnrow"><button class="primary" id="chk">Check my answers</button><button id="sm">Show summary</button></div>
+<div class="fb" id="fb" role="status"></div>
+<div id="summ"></div>
+<div class="rbar"><button class="primary big" id="rb">Print report</button></div>
+</main>
+
+<div id="rep">
+  <div class="bar">
+    <label>Name<input id="inN"></label>
+    <label>Lab section / partners<input id="inS"></label>
+    <button class="primary" id="pr">Print / save as PDF</button>
+    <button id="cl">Close</button>
+    <p class="hint">In the print dialog, choose “Save as PDF” to keep a copy. If nothing opens, use your browser’s print command (Ctrl/Cmd + P).</p>
+  </div>
+  <div class="sheet" id="sheet"></div>
+</div>
+
+<script>
+const COLORS=["--c1","--c2","--c3"];
+const runs=[{va:null,text:""},{va:null,text:""},{va:null,text:""}];
+let sel=0, results=[null,null,null];
+const $=id=>document.getElementById(id);
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const KW=1e-14;
+
+function model(vb,pKa,veq,va,cb){
+  const ca=cb*veq/va,ka=Math.pow(10,-pKa),t=va+vb,na=cb*vb/t,ct=ca*va/t;
+  let lo=-1,hi=15;
+  for(let i=0;i<60;i++){
+    const m=(lo+hi)/2,h=Math.pow(10,-m);
+    const f=na+h-KW/h-ct*ka/(ka+h);
+    if(f>0)lo=m;else hi=m;
+  }
+  return (lo+hi)/2;
+}
+function nelder(f,x0,st){
+  let p=[x0,[x0[0]+st[0],x0[1]],[x0[0],x0[1]+st[1]]].map(x=>({x,v:f(x)}));
+  for(let it=0;it<500;it++){
+    p.sort((a,b)=>a.v-b.v);
+    const [b,m,w]=p,c=[(b.x[0]+m.x[0])/2,(b.x[1]+m.x[1])/2];
+    const pt=k=>[c[0]+k*(w.x[0]-c[0]),c[1]+k*(w.x[1]-c[1])];
+    const r=pt(-1),fr=f(r);
+    if(fr<b.v){const e=pt(-2),fe=f(e);p[2]=fe<fr?{x:e,v:fe}:{x:r,v:fr}}
+    else if(fr<m.v)p[2]={x:r,v:fr};
+    else{const k=pt(fr<w.v?-0.5:0.5),fk=f(k);
+      if(fk<Math.min(fr,w.v))p[2]={x:k,v:fk};
+      else p=p.map((q,i)=>i?{x:[b.x[0]+(q.x[0]-b.x[0])/2,b.x[1]+(q.x[1]-b.x[1])/2],v:0}:q).map(q=>({x:q.x,v:f(q.x)}));}
+    if(Math.abs(p[2].v-p[0].v)<1e-12)break;
+  }
+  p.sort((a,b)=>a.v-b.v);return p[0];
+}
+function parse(text){
+  const pts=[];
+  for(const line of text.split(/\n/)){
+    const n=line.trim().split(/[\s,;]+/).map(Number);
+    if(n.length>=2&&isFinite(n[0])&&isFinite(n[1]))pts.push([n[0],n[1]]);
+  }
+  return pts.sort((a,b)=>a[0]-b[0]);
+}
+function interp(pts,x){
+  for(let i=0;i<pts.length-1;i++){
+    const [x0,y0]=pts[i],[x1,y1]=pts[i+1];
+    if(x>=x0&&x<=x1)return x1===x0?y0:y0+(y1-y0)*(x-x0)/(x1-x0);
+  }
+  return NaN;
+}
+function analyze(run){
+  const pts=parse(run.text),cb=+$("cb").value,va=run.va;
+  if(pts.length<6)throw new Error("Need at least 6 data points.");
+  if(!(va>0))throw new Error("enter the acid volume (mL) before analyzing.");
+  if(!(cb>0))throw new Error("enter the NaOH concentration.");
+  // derivative
+  const d=[];
+  for(let i=0;i<pts.length-1;i++){
+    const dv=pts[i+1][0]-pts[i][0];
+    if(dv>0)d.push([(pts[i][0]+pts[i+1][0])/2,(pts[i+1][1]-pts[i][1])/dv]);
+  }
+  let k=0;d.forEach((q,i)=>{if(q[1]>d[k][1])k=i});
+  let veq=d[k][0];
+  if(k>0&&k<d.length-1){
+    const [x0,y0]=d[k-1],[x1,y1]=d[k],[x2,y2]=d[k+1];
+    const den=(x0-x1)*(x0-x2)*(x1-x2);
+    const A=(x2*(y1-y0)+x1*(y0-y2)+x0*(y2-y1))/den;
+    const B=(x2*x2*(y0-y1)+x1*x1*(y2-y0)+x0*x0*(y1-y2))/den;
+    const v=-B/(2*A);
+    if(A<0&&v>x0&&v<x2)veq=v;
+  }
+  const half=veq/2,phHalf=interp(pts,half);
+  const pHeq=interp(pts,veq);
+  const ca=cb*veq/va;
+  // fit
+  const start=[isFinite(phHalf)?phHalf:4.7,veq];
+  const sse=x=>{
+    if(x[0]<0||x[0]>12||x[1]<=0)return 1e9;
+    let s=0;for(const [v,p] of pts){const e=model(v,x[0],x[1],va,cb)-p;s+=e*e}return s;
+  };
+  const best=nelder(sse,start,[0.3,veq*0.05]);
+  const mean=pts.reduce((a,p)=>a+p[1],0)/pts.length;
+  const sst=pts.reduce((a,p)=>a+(p[1]-mean)**2,0);
+  const fpKa=best.x[0],fveq=best.x[1];
+  return{pts,va,cb,veq,half,phHalf,pHeq,ca,fpKa,fveq,fca:cb*fveq/va,
+    r2:1-best.v/sst,rmse:Math.sqrt(best.v/pts.length),
+    fphHalf:model(fveq/2,fpKa,fveq,va,cb),fpHeq:model(fveq,fpKa,fveq,va,cb)};
+}
+const f=(x,n=2)=>isFinite(x)?x.toFixed(n):"n/a";
+
+// plotting
+function drawD(){
+  const cv=$("cd"),dpr=window.devicePixelRatio||1,W=cv.clientWidth,H=cv.clientHeight;
+  cv.width=W*dpr;cv.height=H*dpr;
+  const g=cv.getContext("2d");g.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,W,H);
+  const show=sel===3?[0,1,2]:[sel];
+  const ds=show.map(i=>{const r=results[i];if(!r)return null;
+    const d=[];for(let k=0;k<r.pts.length-1;k++){const dv=r.pts[k+1][0]-r.pts[k][0];if(dv>0)d.push([(r.pts[k][0]+r.pts[k+1][0])/2,(r.pts[k+1][1]-r.pts[k][1])/dv])}
+    return{i,r,d}}).filter(Boolean);
+  const ink=css("--ink"),mut=css("--mut"),line=css("--line"),pink=css("--ink");
+  const L=60,R=16,T=8,B=34;
+  g.font="11px system-ui,sans-serif";
+  if(!ds.length){g.fillStyle=mut;g.textAlign="center";g.fillText("Analyze data to see the derivative",W/2,H/2);return}
+  const xmax=Math.max(10,...ds.map(o=>Math.max(...o.r.pts.map(p=>p[0]))))*1.03;
+  const raw=Math.max(...ds.map(o=>Math.max(...o.d.map(p=>p[1]))))*1.1;
+  const ys=Math.pow(10,Math.floor(Math.log10(raw)));
+  const yst=[1,2,5,10].map(m=>m*ys/ (raw/ys>5?1:2)).find(s=>raw/s<=6)||ys;
+  const ymax=Math.ceil(raw/yst)*yst;
+  const X=v=>L+(v/xmax)*(W-L-R),Y=p=>T+(1-p/ymax)*(H-T-B);
+  g.strokeStyle=line;g.fillStyle=mut;g.lineWidth=1;g.textAlign="right";
+  for(let p=0;p<=ymax+1e-9;p+=yst){g.beginPath();g.moveTo(L,Y(p));g.lineTo(W-R,Y(p));g.stroke();g.fillText(+p.toFixed(2),L-6,Y(p)+4)}
+  const step=xmax>40?10:5;g.textAlign="center";
+  for(let v=0;v<=xmax;v+=step)g.fillText(v,X(v),H-B+15);
+  g.fillStyle=ink;g.fillText("NaOH added (mL)",(L+W-R)/2,H-6);
+  g.save();g.translate(12,(T+H-B)/2);g.rotate(-Math.PI/2);g.fillText("First derivative (pH/mL)",0,0);g.restore();
+  ds.forEach(({i,r,d})=>{
+    const col=css(COLORS[i]);
+    g.strokeStyle=col;g.lineWidth=2;g.beginPath();
+    d.forEach(([v,s],k)=>k?g.lineTo(X(v),Y(s)):g.moveTo(X(v),Y(s)));g.stroke();
+    g.fillStyle=col;d.forEach(([v,s])=>{g.beginPath();g.arc(X(v),Y(s),3,0,7);g.fill()});
+    if(ds.length===1){
+      g.setLineDash([5,4]);g.strokeStyle=pink;g.lineWidth=1.3;
+      g.beginPath();g.moveTo(X(r.veq),Y(0));g.lineTo(X(r.veq),Y(ymax));g.stroke();g.setLineDash([]);
+      g.fillStyle=ink;g.font="600 12px system-ui,sans-serif";g.textAlign="left";g.fillText(revealed?`Veq = ${f(r.veq)} mL`:"Veq",X(r.veq)+8,T+14);
+    }
+  });
+  if(ds.length>1){g.textAlign="left";ds.forEach(({i},n)=>{g.fillStyle=css(COLORS[i]);g.fillText(`Run ${i+1} (${runs[i].va} mL)`,L+10,T+14+n*15)})}
+}
+function draw(){
+  drawD();
+  const cv=$("cv"),dpr=window.devicePixelRatio||1,W=cv.clientWidth,H=cv.clientHeight;
+  cv.width=W*dpr;cv.height=H*dpr;
+  const g=cv.getContext("2d");g.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,W,H);
+  const show=sel===3?[0,1,2]:[sel];
+  const rs=show.map(i=>({i,r:results[i]})).filter(o=>o.r);
+  const ink=css("--ink"),mut=css("--mut"),line=css("--line"),pink=css("--ink");
+  const L=60,R=16,T=14,B=34;
+  const xmax=Math.max(10,...rs.map(o=>Math.max(...o.r.pts.map(p=>p[0]))))*1.03;
+  const X=v=>L+(v/xmax)*(W-L-R),Y=p=>T+(1-p/14)*(H-T-B);
+  g.font="11px system-ui,sans-serif";g.fillStyle=mut;g.strokeStyle=line;g.lineWidth=1;
+  for(let p=0;p<=14;p+=2){g.beginPath();g.moveTo(L,Y(p));g.lineTo(W-R,Y(p));g.stroke();g.textAlign="right";g.fillText(p,L-6,Y(p)+4)}
+  const step=xmax>40?10:5;
+  g.textAlign="center";
+  for(let v=0;v<=xmax;v+=step){g.fillText(v,X(v),H-B+15)}
+  g.fillStyle=ink;g.fillText("NaOH added (mL)",(L+W-R)/2,H-6);
+  g.save();g.translate(12,(T+H-B)/2);g.rotate(-Math.PI/2);g.fillText("pH",0,0);g.restore();
+  const curvePts=[];
+  rs.forEach(({r})=>{for(let k=0;k<=2400;k++){const v=k/2400*xmax;curvePts.push([X(v),Y(model(v,r.fpKa,r.fveq,r.va,r.cb))])}});
+  const placed=[];
+  rs.forEach(({i,r})=>{
+    const col=css(COLORS[i]);
+    g.strokeStyle=col;g.lineWidth=2;g.beginPath();
+    for(let k=0;k<=240;k++){const v=k/240*xmax,p=model(v,r.fpKa,r.fveq,r.va,r.cb);k?g.lineTo(X(v),Y(p)):g.moveTo(X(v),Y(p))}
+    g.stroke();
+    g.fillStyle=col;r.pts.forEach(([v,p])=>{g.beginPath();g.arc(X(v),Y(p),3,0,7);g.fill()});
+    if(rs.length===1){
+      g.setLineDash([5,4]);g.strokeStyle=pink;g.lineWidth=1.3;
+      g.beginPath();g.moveTo(X(r.veq),Y(0));g.lineTo(X(r.veq),Y(14));g.stroke();
+      g.beginPath();g.moveTo(X(r.half),Y(0));g.lineTo(X(r.half),Y(r.phHalf));g.lineTo(L,Y(r.phHalf));g.stroke();
+      g.setLineDash([]);
+      g.fillStyle=pink;g.beginPath();g.arc(X(r.half),Y(r.phHalf),5,0,7);g.fill();
+      g.beginPath();g.arc(X(r.veq),Y(r.pHeq),5,0,7);g.fill();
+      g.font="600 12px system-ui,sans-serif";g.textAlign="left";
+      g.fillText(revealed?`Veq = ${f(r.veq)} mL, pH = ${f(r.pHeq)}`:"Veq (equivalence point)",X(r.veq)+10,Y(r.pHeq)+4);
+      g.fillText(revealed?`V½ = ${f(r.half)} mL, pH = ${f(r.phHalf)} (pKa)`:"V½ (half-equivalence point)",X(r.half)+10,Y(r.phHalf)+20);
+    }else{
+      g.fillStyle=col;g.font="600 11px system-ui,sans-serif";g.textAlign="left";
+      const pts2=[[r.veq,r.pHeq],[r.half,r.phHalf]].map(([v,p])=>[X(v),Y(p)]);
+      pts2.forEach(([px,py])=>{g.beginPath();g.arc(px,py,4,0,7);g.fill()});
+      const lines=revealed?[`Run ${i+1} · Veq = ${f(r.veq)} mL, pH = ${f(r.pHeq)}`,`V½ = ${f(r.half)} mL, pH = ${f(r.phHalf)}`]:[`Run ${i+1} · Veq`,`V½`];
+      const bw=Math.max(...lines.map(s=>g.measureText(s).width))+8,bh=32;
+      const cx=(pts2[0][0]+pts2[1][0])/2,cy=(pts2[0][1]+pts2[1][1])/2,cand=[];
+      for(let x=L;x+bw<=W-R;x+=10)for(let y=T;y+bh<=H-B;y+=10)cand.push([x,y,Math.hypot(x+bw/2-cx,y+bh/2-cy)]);
+      cand.sort((a,b)=>a[2]-b[2]);
+      const hit=cand.find(([x,y])=>!placed.some(q=>x<q.x+q.w&&x+bw>q.x&&y<q.y+q.h&&y+bh>q.y)&&!curvePts.some(c=>c[0]>=x-3&&c[0]<=x+bw+3&&c[1]>=y-3&&c[1]<=y+bh+3))||cand[0]||[L,T,0];
+      const bx=hit[0],by=hit[1];
+      placed.push({x:bx,y:by,w:bw,h:bh});
+      g.strokeStyle=col;g.lineWidth=1;
+      pts2.forEach(([px,py])=>{const ax=Math.min(Math.max(px,bx),bx+bw),ay=Math.min(Math.max(py,by),by+bh);g.beginPath();g.moveTo(ax,ay);g.lineTo(px,py);g.stroke()});
+      g.globalAlpha=.94;g.fillStyle=css("--surf");g.fillRect(bx,by,bw,bh);g.globalAlpha=1;
+      g.strokeStyle=col;g.lineWidth=1.5;g.strokeRect(bx,by,bw,bh);
+      g.fillStyle=col;lines.forEach((s,k)=>g.fillText(s,bx+4,by+12+k*14));
+    }
+  });
+  if(!rs.length){g.fillStyle=mut;g.textAlign="center";g.fillText("Analyze data to see the curve",W/2,H/2)}
+  else if(rs.length>1){
+    g.textAlign="left";rs.forEach(({i},n)=>{g.fillStyle=css(COLORS[i]);g.fillText(`Run ${i+1} (${runs[i].va} mL)`,L+10,T+14+n*15)});
+  }
+}
+
+const LIT=4.76;
+// Accepted ranges (edit here): [type "abs" or "rel", amount, text shown to students]
+const Q=[["veq","Equivalence volume, Veq (mL)"],["pheq","pH at the equivalence point"],["half","Half-equivalence volume, V½ (mL)"],["phhalf","pH at the half-equivalence point"],["ka","Ka (e.g. 1.8e-5)"],["ca","Acid concentration (M)"]];
+const TOL={veq:["abs",0.4,"within 0.4 mL"],pheq:["abs",1,"within 1 pH unit"],half:["abs",0.3,"within 0.3 mL"],phhalf:["abs",0.15,"within 0.15 pH unit"],ka:["rel",0.25,"within 25%"],ca:["rel",0.05,"within 5%"]};
+const HINT={ka:"Ka = 10^(−pH)",ca:"[acid] = [NaOH] × Veq ÷ volume of acid"};
+const answers=[{},{},{}];let status={},revealed=true;
+const keyOf=r=>({veq:r.veq,pheq:r.pHeq,half:r.half,phhalf:r.phHalf,ka:Math.pow(10,-r.phHalf),ca:r.ca});
+const esc=t=>String(t).replace(/"/g,"&quot;");
+function parseSci(t){t=String(t).trim().replace(/\s+/g,"").replace(/[\u2212\u2013]/g,"-");const m=t.match(/^([\d.]+)[x\u00d7*]10\^?\(?(-?\d+)\)?$/i);return m?parseFloat(m[1])*Math.pow(10,+m[2]):Number(t)}
+const doneRuns=()=>results.map((r,i)=>r?i:-1).filter(i=>i>=0);
+function renderAnswers(){
+  status={};$("summ").innerHTML="";$("fb").textContent="";
+  const cols=doneRuns();
+  if(!cols.length){$("ans").innerHTML='<p class="note">Analyze your data to start. Each analyzed run will get a column here.</p>';return}
+  $("ans").innerHTML=`<table class="ans"><tr><th>Quantity</th>${cols.map(i=>`<th>Run ${i+1} (${runs[i].va} mL acid)</th>`).join("")}<th>Accepted if</th></tr>${Q.map(([k,lab])=>`<tr><td>${lab}${HINT[k]?`<span class="qh">${HINT[k]}</span>`:""}</td>${cols.map(i=>`<td id="c_${i}_${k}"><input id="a_${i}_${k}" value="${esc(answers[i][k]||"")}" inputmode="decimal" autocomplete="off" aria-label="Run ${i+1}: ${esc(lab)}"><span class="mk" id="m_${i}_${k}"></span></td>`).join("")}<td>${TOL[k][2]}</td></tr>`).join("")}</table>`;
+  cols.forEach(i=>Q.forEach(([k])=>{$("a_"+i+"_"+k).oninput=e=>{answers[i][k]=e.target.value}}));
+}
+function judge(){
+  status={};let ok=0,bad=0,blank=0;
+  doneRuns().forEach(i=>{const c=keyOf(results[i]);Q.forEach(([k])=>{
+    const raw=String(answers[i][k]||"").trim(),v=parseSci(raw),[t,tol]=TOL[k];
+    let st="blank";
+    if(raw!==""&&isFinite(v)){const d=Math.abs(v-c[k]);st=(t==="abs"?d<=tol:d<=tol*Math.abs(c[k]))?"ok":"bad"}
+    status[i+"_"+k]=st;if(st==="ok")ok++;else if(st==="bad")bad++;else blank++;
+  })});
+  return{ok,bad,blank,total:ok+bad+blank};
+}
+function marks(){
+  Object.entries(status).forEach(([id,st])=>{
+    const td=$("c_"+id),m=$("m_"+id);if(!td)return;
+    td.className=st;m.textContent=st==="ok"?"\u2713 Correct":st==="bad"?"\u2717 Check again":"Enter a value";
+  });
+}
+function check(){
+  if(!doneRuns().length){$("fb").textContent="Analyze your data first.";return}
+  const j=judge();marks();
+  $("fb").innerHTML=`<b>${j.ok} of ${j.total} correct.</b>`+(j.blank?` ${j.blank} left blank.`:"")+(j.bad?" Re-read the graphs for the marked answers, fix them, and press Check again.":(j.blank?"":" Great work! Press Show summary to see the full results."));
+}
+function summary(quiet){
+  if(!doneRuns().length){$("fb").textContent="Analyze your data first.";return}
+  const j=judge();marks();revealed=true;draw();
+  const cols=doneRuns();
+  const fmt=(k,v)=>k==="ka"?v.toExponential(2):f(v,k==="ca"?4:2);
+  const own=(i,k)=>{const raw=String(answers[i][k]||"").trim(),v=parseSci(raw);return raw!==""&&isFinite(v)?fmt(k,v):"\u2014"};
+  const mk={ok:"\u2713",bad:"\u2717",blank:"\u2014"};
+  const head=`<tr><th rowspan="2">Quantity</th>${cols.map(i=>`<th colspan="3" class="g1">Run ${i+1} (${runs[i].va} mL acid)</th>`).join("")}</tr><tr>${cols.map(()=>"<th>Your answer</th><th>Correct</th><th></th>").join("")}</tr>`;
+  const body=Q.map(([k,lab])=>`<tr><td>${lab}</td>${cols.map(i=>`<td>${own(i,k)}</td><td>${status[i+"_"+k]==="ok"?`<b>${fmt(k,keyOf(results[i])[k])}</b>`:'<span class="note">hidden until correct</span>'}</td><td class="${status[i+"_"+k]}">${mk[status[i+"_"+k]]}</td>`).join("")}</tr>`).join("");
+  const pk=cols.map(i=>results[i].phHalf),m=pk.reduce((a,b)=>a+b,0)/pk.length,sd=pk.length>1?Math.sqrt(pk.reduce((a,b)=>a+(b-m)**2,0)/(pk.length-1)):null;
+  const allPk=cols.every(i=>status[i+"_phhalf"]==="ok");const perr=Math.abs(m-LIT)/LIT*100;
+  $("summ").innerHTML=`<h2>Summary</h2><div class="panel"><p class="score">Score: ${j.ok} of ${j.total} correct (${j.total?Math.round(100*j.ok/j.total):0}%)</p><div class="scroll"><table>${head}${body}</table></div>${j.ok<j.total?'<p class="note">Correct values stay hidden until you enter them correctly. Fix the marked answers and press Show summary again.</p>':""}${allPk?`<p>Mean pKa from the data: <b>${f(m,2)}${sd===null?"":" \u00b1 "+f(sd,2)}</b>. Literature pKa of acetic acid: ${LIT}. Percent error: <b>${f(perr,1)}%</b>.</p>`:'<p class="note">The mean pKa and percent error appear once your pKa answers for every run are correct.</p>'}</div>`;
+  $("fb").innerHTML=`<b>${j.ok} of ${j.total} correct.</b>`;
+  if(!quiet)$("summ").scrollIntoView({behavior:"smooth",block:"start"});
+}
+function snap(){
+  const cv=$("cv"),cd=$("cd"),root=document.documentElement,old=root.getAttribute("data-theme"),oldSel=sel;
+  root.setAttribute("data-theme","light");sel=3;
+  cv.style.width=cd.style.width="760px";cv.style.height="270px";cd.style.height="170px";
+  draw();
+  const a=cv.toDataURL("image/png"),b=cd.toDataURL("image/png");
+  cv.style.width=cd.style.width=cv.style.height=cd.style.height="";
+  sel=oldSel;
+  if(old===null)root.removeAttribute("data-theme");else root.setAttribute("data-theme",old);
+  draw();return[a,b];
+}
+function openReport(){
+  if(!doneRuns().length){$("fb").textContent="Analyze your data first, then enter your answers.";return}
+  summary(true);
+  const [a,b]=snap();
+  const vols=doneRuns().map(i=>`Run ${i+1} (${runs[i].va} mL acid)`).join(", ");
+  $("sheet").innerHTML=`<div class="rh"><h1>Titration analysis report</h1><p>Acetic acid titrated with NaOH</p></div>
+  <div class="meta"><span><b>Name:</b> <span id="rn"></span></span><span><b>Section:</b> <span id="rs"></span></span><span><b>Date:</b> ${new Date().toLocaleDateString()}</span><span><b>[NaOH]:</b> ${$("cb").value} M</span><span><b>Runs:</b> ${vols}</span></div>
+  <img src="${a}" alt="Titration curves with labeled points"><img src="${b}" alt="First derivative of the titration curves">
+  <p class="fine">Dots are measured data and lines are the fit. Lower plot: first derivative of pH with respect to volume.</p>
+  ${$("summ").innerHTML}`;
+  $("rn").textContent=$("inN").value;$("rs").textContent=$("inS").value;
+  $("rep").classList.add("open");
+}
+$("inN").oninput=()=>{const e=$("rn");if(e)e.textContent=$("inN").value};
+$("inS").oninput=()=>{const e=$("rs");if(e)e.textContent=$("inS").value};
+$("rb").onclick=openReport;
+$("cl").onclick=()=>$("rep").classList.remove("open");
+$("pr").onclick=()=>{try{window.print()}catch(e){}};
+$("chk").onclick=check;$("sm").onclick=()=>summary();
+
+// UI
+function buildTabs(){
+  const t=$("tabs");t.innerHTML="";
+  [...runs.map((r,i)=>`Run ${i+1}${r.va?` · ${r.va} mL acid`:" · volume needed"}`),"All runs"].forEach((name,i)=>{
+    const b=document.createElement("button");b.textContent=name;b.setAttribute("aria-pressed",i===sel);
+    b.onclick=()=>{saveInputs();sel=i;buildTabs();show()};t.appendChild(b);
+  });
+}
+function saveInputs(){if(sel<3){runs[sel].text=$("data").value;runs[sel].va=$("va").value===""?null:+$("va").value}}
+function show(){
+  const single=sel<3;
+  $("data").style.display=single?"":"none";$("va").parentElement.style.display=single?"":"none";
+  if(single){$("data").value=runs[sel].text;$("va").value=runs[sel].va??""}
+  requestAnimationFrame(draw);
+}
+function runAll(){
+  saveInputs();const msgs=[];
+  runs.forEach((r,i)=>{
+    results[i]=null;
+    if(!r.text.trim())return;
+    try{results[i]=analyze(r)}catch(e){msgs.push(`Run ${i+1}: ${e.message}`)}
+  });
+  $("err").textContent=msgs.join(" ");
+  renderAnswers();show();
+}
+// example data: simulated with small seeded noise
+function example(){
+  let s=7;const rnd=()=>{s=(s*16807)%2147483647;return s/2147483647-0.5};
+  runs.forEach((r,ri)=>{
+    r.va=[15,20,25][ri];
+    const cb=+$("cb").value||0.069,veq=r.va*0.1/cb,vs=[];
+    const lines=[];
+    for(let v=0;v<=veq*1.6;v+=veq/12)vs.push(v);
+    [0.92,0.97,0.99,1.01,1.03,1.08].forEach(m=>vs.push(veq*m));
+    vs.sort((a,b)=>a-b);
+    vs.forEach(v=>{const p=model(v,4.76,veq,r.va,cb)+rnd()*0.06;lines.push(v.toFixed(2)+", "+p.toFixed(2))});
+    r.text=lines.join("\n");
+  });
+  buildTabs();show();runAll();
+}
+function loadFile(txt,name){
+  const parts=txt.split(/^[ \t]*Run[ \t]*\d+[ \t]*\r?$/gmi);
+  let msg;
+  if(parts.length>1){
+    const blocks=parts.slice(1).map(b=>parse(b)).filter(p=>p.length);
+    if(!blocks.length){$("err").textContent="No numeric volume/pH data found in that file.";return}
+    runs.forEach((r,i)=>{r.text=blocks[i]?blocks[i].map(p=>p.join(", ")).join("\n"):"";r.va=null;results[i]=null});
+    sel=0;
+    msg=`Loaded ${Math.min(blocks.length,3)} run(s) from ${name}.`+(blocks.length>3?" Only the first 3 runs were used.":"");
+  }else{
+    const p=parse(txt);
+    if(!p.length){$("err").textContent="No numeric volume/pH data found in that file.";return}
+    const t=sel<3?sel:0;sel=t;runs[t].text=p.map(q=>q.join(", ")).join("\n");runs[t].va=null;results[t]=null;
+    msg=`Loaded 1 run from ${name} into Run ${t+1}.`;
+  }
+  buildTabs();show();renderAnswers();
+  $("err").textContent=msg+" Enter the acid volume for each run, then press Analyze.";
+}
+$("file").onchange=async e=>{const fl=e.target.files[0];if(!fl)return;loadFile(await fl.text(),fl.name);e.target.value=""};
+$("go").onclick=runAll;$("ex").onclick=example;
+window.addEventListener("resize",draw);
+buildTabs();show();renderAnswers();
+</script>
+</body>
+</html>
